@@ -75,4 +75,4 @@ const DATA = [
   ]
 ];
 
-export default data;
+export default DATA;

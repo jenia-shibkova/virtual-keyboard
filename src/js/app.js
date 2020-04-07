@@ -164,9 +164,9 @@ export default class App extends Component {
   
     if (element.classList.contains('ShiftLeft') || element.classList.contains('ShiftRight')) {
       if (capsLockButton.classList.contains('key--active')) {
-        switcher(this.state.uppercase = false, upKeys, downKeys);
+        UTILS.switcher(this.state.uppercase = false, upKeys, downKeys);
       } else {
-        switcher(this.state.uppercase = true, upKeys, downKeys);
+        UTILS.switcher(this.state.uppercase = true, upKeys, downKeys);
       }
     }
   
@@ -240,7 +240,7 @@ export default class App extends Component {
         this.state.en = true;
       }
   
-     // saveState(State.en);
+      UTILS.saveState(this.state.en);
       UTILS.switcher(this.state.en, enKeys, ruKeys);
     }
   
@@ -316,9 +316,6 @@ export default class App extends Component {
     const downKeys = document.querySelectorAll('.down');
     const upKeys = document.querySelectorAll('.up');
     const textarea = document.getElementById('result');
-
-    const enKeys = document.querySelectorAll('.en');
-    const ruKeys = document.querySelectorAll('.ru');
   
     if (this.state.pressed.size === 0) {
       return;
@@ -347,7 +344,7 @@ export default class App extends Component {
     textarea.focus();
   }
 
-  onMouseLeave () {
+  onMouseLeave() {
     const onMouseLeaveHandler = (event) => {
       const { target } = event;
       if (!target.classList.contains('key')) return;
@@ -359,19 +356,34 @@ export default class App extends Component {
 
     const keyButton = document.querySelectorAll('.key');
     keyButton.forEach(function (button) {
-      console.log(this)
       button.addEventListener('mouseleave', onMouseLeaveHandler);
     });
   }
+  
+  localStorageInit() {    
+    const saveLangValue = localStorage.getItem('lang-en');    
+    const enKeys = document.querySelectorAll('.en');
+    const ruKeys = document.querySelectorAll('.ru');
+
+    if (saveLangValue === 'true') { // switch lang state
+      this.state.en = true;
+    } else this.state.en = false;
+
+    UTILS.switcher(this.state.en, enKeys, ruKeys);
+  }
+  
 
   start() {
     this.createApp();
-    
+
     document.addEventListener('click', this.onClick.bind(this));
     document.addEventListener('mousedown', this.onMouseDown.bind(this));
     document.addEventListener('mouseup', this.onMouseUp.bind(this));
     document.addEventListener('keydown', this.onKeyDown.bind(this));    
     document.addEventListener('keyup', this.onKeyUp.bind(this));
-    this.onMouseLeave();    
+    this.onMouseLeave();
+
+    // init localStorage data
+    window.addEventListener('load', this.localStorageInit.bind(this), false);    
   }
 }

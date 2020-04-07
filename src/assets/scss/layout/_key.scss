@@ -1,0 +1,128 @@
+.key {
+  width: 40px;
+  height: 40px;
+  margin: 6px;
+  font-weight: 500;
+  line-height: 40px;
+  text-align: center;
+  color: $mainFontColor;
+  background-color: $default-color;
+  border-radius: 3px;
+  cursor: pointer;
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+          box-shadow: 0 1px 2px rgba(0,0,0,0.12);
+
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+      user-select: none;
+  -webkit-transition: border-radius .2s, background-color .2s;
+  -o-transition: border-radius .2s, background-color .2s;
+  transition: border-radius .2s, background-color .2s
+}
+
+.key.Enter {
+  width: 100px;
+}
+
+.key.Backspace {
+  width: 100px;
+}
+
+.key.ShiftLeft,
+.key.ShiftRight {
+  width: 100px;
+}
+
+.key.ContolLeft,
+.key.ContolRight {
+  width: 42px;
+}
+
+.key.Tab {
+  width: 50px;
+}
+
+.key.CapsLock {
+  width: 100px;
+}
+
+.key.Space {
+  -webkit-box-flex: 2;
+      -ms-flex-positive: 2;
+          flex-grow: 2;
+}
+
+.key.Tab,
+.key.Enter,
+.key.ShiftLeft,
+.key.ShiftRight,
+.key.Backquote,
+.key.CapsLock,
+.key.Space,
+.key.Backspace,
+.key.Delete,
+.key.MetaLeft,
+.key.ControlLeft,
+.key.ControlRight,
+.key.AltLeft,
+.key.AltRight,
+.key.ArrowUp,
+.key.ArrowLeft,
+.key.ArrowRight,
+.key.ArrowDown {
+  background-color: #484aa1;
+  color: #ffffff;
+}
+
+.down,
+.up {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+}
+
+.off {
+  display: none;
+}
+
+.key:hover,
+.key:focus,
+.key:active {
+  background-color: #5571ee;
+}
+
+.key--active {
+  background-color: #5571ee;
+  border-radius: 25%;
+
+  -webkit-box-shadow: 0 2px 4px rgba(0,0,0,0.24);
+
+          box-shadow: 0 2px 4px rgba(0,0,0,0.24);
+}
+
+.key.Tab.key--active,
+.key.Backquote.key--active,
+.key.Delete.key--active,
+.key.MetaLeft.key--active,
+.key.ControlLeft.key--active,
+.key.ControlRight.key--active,
+.key.AltLeft.key--active,
+.key.AltRight.key--active,
+.key.ArrowUp.key--active,
+.key.ArrowLeft.key--active,
+.key.ArrowRight.key--active,
+.key.ArrowDown.key--active {
+  background-color: #5571ee;
+  border-radius: 25%;
+}
+
+.key.ShiftLeft.key--active,
+.key.ShiftRight.key--active,
+.key.Enter.key--active,
+.key.CapsLock.key--active,
+.key.Backspace.key--active,
+.key.Space.key--active {
+  background-color: #5571ee;
+  border-radius: 15px;
+}

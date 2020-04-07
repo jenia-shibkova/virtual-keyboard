@@ -52,11 +52,11 @@ export default class App extends Component {
     const endCursorValue = textarea.selectionEnd;
 
     if (target.classList.contains('CapsLock')) {
-      if (this.this.state.uppercase) { // switch capsLock state
-        this.this.state.uppercase = false;
-      } else this.this.state.uppercase = true;
+      if (this.state.uppercase) { // switch capsLock state
+        this.state.uppercase = false;
+      } else this.state.uppercase = true;
   
-      UTILS.switcher(this.this.state.uppercase, upKeys, downKeys);
+      UTILS.switcher(this.state.uppercase, upKeys, downKeys);
 
       if (capsLockButton.classList.contains('key--active')) {
         capsLockButton.classList.remove('key--active');
@@ -68,7 +68,6 @@ export default class App extends Component {
     if (target.classList.contains('down') || target.classList.contains('up')) {
       const char = target.innerText;
       let className = target.classList[0];
-      console.log(className)
       textarea.focus();
   
       if (CONSTANTS.NOT_FOR_PRINT_BUTTONS.includes(className)) {
@@ -156,10 +155,56 @@ export default class App extends Component {
     }  
   }
 
+  onMouseDown({ target }) {
+    const element = document.querySelector(`.${target.classList[0]}`);
+    const downKeys = document.querySelectorAll('.down');
+    const upKeys = document.querySelectorAll('.up');
+    const capsLockButton = document.querySelector('.CapsLock');
+  
+    if (!element) { // if null
+      return;
+    }
+  
+    if (element.classList.contains('ShiftLeft') || element.classList.contains('ShiftRight')) {
+      if (capsLockButton.classList.contains('key--active')) {
+        switcher(this.state.uppercase = false, upKeys, downKeys);
+      } else {
+        switcher(this.state.uppercase = true, upKeys, downKeys);
+      }
+    }
+  
+    if (element.classList.contains('key') && !element.classList.contains('CapsLock')) {
+      element.classList.add('key--active');
+    }
+  };
+
+  onMouseUp({ target }) {
+    const element = document.querySelector(`.${target.classList[0]}`);
+    const capsLockButton = document.querySelector('.CapsLock');
+  
+    if (!element) {
+      return;
+    }
+  
+    if (element.classList.contains('ShiftLeft') || element.classList.contains('ShiftRight')) {
+      if (capsLockButton.classList.contains('key--active')) {
+        switcher(this.state.uppercase = true, upKeys, downKeys);
+      } else {
+        switcher(this.state.uppercase = false, upKeys, downKeys);
+      }
+    }
+  
+    if (element.classList.contains('key') && !element.classList.contains('CapsLock') && element.classList.contains('key--active')) {
+      element.classList.remove('key--active');
+    }
+  };
+
   start() {
     this.createApp();
     const keyboard = document.querySelector('.keyboard');
     
     keyboard.addEventListener('click', this.onClick.bind(this));
+    keyboard.addEventListener('mousedown', this.onMouseDown.bind(this));
+    keyboard.addEventListener('mouseup', this.onMouseUp.bind(this));
   }
 }

@@ -5,10 +5,7 @@ export default class Row extends Component {
   constructor(data) {
     super();
     this.data = data;
-  }
-
-  getTemplate() {
-    return '<div class="keyboard__row"></div>';
+    this.template = '<div class="keyboard__row"></div>';
   }
 
   getRow() {
@@ -23,11 +20,11 @@ export default class Row extends Component {
 
     return rowContainer;
   }
-  
+
   createRow() {
     const rowElement = this.createElement();
     const rowData = this.getRow();
     rowElement.appendChild(rowData);
     return rowElement;
-  };
+  }
 }

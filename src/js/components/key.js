@@ -18,6 +18,6 @@ export default class Key extends Component {
           <span class="${this.name} down">${this.value[1][0]}</span>
           <span class="${this.name} up off">${this.value[1][1]}</span>
         </span>
-      </div>`;      
-  }  
+      </div>`;
+  }
 }

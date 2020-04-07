@@ -22,7 +22,7 @@ const switcher = (state, keysA, keysB) => {
       }
     });
   }
-};  
+};
 
 const saveState = (state) => {
   if (Object.keys(localStorage).includes('lang-en')) {

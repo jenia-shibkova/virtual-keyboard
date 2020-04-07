@@ -1,7 +1,7 @@
 const CONSTANTS = {
   NOT_FOR_PRINT_BUTTONS: [
     'CapsLock', 'ShiftLeft', 'ShiftRight', 'AltLeft', 'AltRight', 'MetaLeft', 'ControlLeft', 'ControlRight'
-  ],  
+  ],
   NOT_FOR_PRESS_BUTTONS: [
     'Escape', 'F1', 'F2', 'F3', 'F4', 'F5', 'F6', 'F7', 'F8', 'F9', 'F10', 'F11', 'F12', 'Pause', 'Insert',
     'Home', 'PageUp', 'PageDown', 'End', 'NumLock', 'NumpadDivide', 'NumpadMultiply', 'NumpadSubtract', 'Numpad7',
@@ -21,4 +21,3 @@ const CONSTANTS = {
 };
 
 export default CONSTANTS;
-

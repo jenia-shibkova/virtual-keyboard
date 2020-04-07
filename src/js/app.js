@@ -14,26 +14,27 @@ export default class App extends Component {
       pressed: new Set(),
       arr: []
     };
+    this.template = `<div class="wrapper">
+                      <textarea id="result" class="textarea" rows="5" cols="60"></textarea>
+                      <div class="keyboard"></div>
+                    </div>`;
   }
 
   getTemplate() {
-    return `<div class="wrapper">
-              <textarea id="result" class="textarea" rows="5" cols="60"></textarea>
-              <div class="keyboard"></div>
-            </div>`;
+    return this.template;
   }
 
-  createApp() {        
+  createApp() {
     const app = this.createElement(this.getTemplate());
     const appTemplate = document.createDocumentFragment();
     appTemplate.appendChild(app);
     const keyboard = appTemplate.querySelector('.keyboard');
-    
+
     DATA.forEach((el) => {
-      const row = new Row(el);      
+      const row = new Row(el);
       keyboard.appendChild(row.createRow());
     });
-  
+
     document.body.appendChild(appTemplate);
   }
 
@@ -52,7 +53,7 @@ export default class App extends Component {
       if (this.state.uppercase) { // switch capsLock state
         this.state.uppercase = false;
       } else this.state.uppercase = true;
-  
+
       UTILS.switcher(this.state.uppercase, upKeys, downKeys);
 
       if (capsLockButton.classList.contains('key--active')) {
@@ -60,17 +61,17 @@ export default class App extends Component {
       } else {
         capsLockButton.classList.add('key--active');
       }
-    } 
+    }
 
     if (target.classList.contains('down') || target.classList.contains('up')) {
       const char = target.innerText;
       let className = target.classList[0];
       textarea.focus();
-  
+
       if (CONSTANTS.NOT_FOR_PRINT_BUTTONS.includes(className)) {
         return;
       }
-  
+
       switch (className) {
         case 'Space':
           textarea.value = `${currentValue} `;
@@ -135,7 +136,7 @@ export default class App extends Component {
           textarea.value = `${currentValue}`;
           this.state.result = textarea.value;
           break;
-  
+
         default:
           // ability to insert a character in the middle of a line
           if (this.state.result.length !== startCursorValue) {
@@ -149,7 +150,7 @@ export default class App extends Component {
             this.state.result = textarea.value;
           }
       }
-    }  
+    }
   }
 
   onMouseDown({ target }) {
@@ -157,11 +158,11 @@ export default class App extends Component {
     const downKeys = document.querySelectorAll('.down');
     const upKeys = document.querySelectorAll('.up');
     const capsLockButton = document.querySelector('.CapsLock');
-  
+
     if (!element) { // if null
       return;
     }
-  
+
     if (element.classList.contains('ShiftLeft') || element.classList.contains('ShiftRight')) {
       if (capsLockButton.classList.contains('key--active')) {
         UTILS.switcher(this.state.uppercase = false, upKeys, downKeys);
@@ -169,7 +170,7 @@ export default class App extends Component {
         UTILS.switcher(this.state.uppercase = true, upKeys, downKeys);
       }
     }
-  
+
     if (element.classList.contains('key') && !element.classList.contains('CapsLock')) {
       element.classList.add('key--active');
     }
@@ -178,25 +179,27 @@ export default class App extends Component {
   onMouseUp({ target }) {
     const element = document.querySelector(`.${target.classList[0]}`);
     const capsLockButton = document.querySelector('.CapsLock');
-  
+    const downKeys = document.querySelectorAll('.down');
+    const upKeys = document.querySelectorAll('.up');
+
     if (!element) {
       return;
     }
-  
+
     if (element.classList.contains('ShiftLeft') || element.classList.contains('ShiftRight')) {
       if (capsLockButton.classList.contains('key--active')) {
-        switcher(this.state.uppercase = true, upKeys, downKeys);
+        UTILS.switcher(this.state.uppercase = true, upKeys, downKeys);
       } else {
-        switcher(this.state.uppercase = false, upKeys, downKeys);
+        UTILS.switcher(this.state.uppercase = false, upKeys, downKeys);
       }
     }
-  
+
     if (element.classList.contains('key') && !element.classList.contains('CapsLock') && element.classList.contains('key--active')) {
       element.classList.remove('key--active');
     }
   }
 
-  onKeyDown (event) {
+  onKeyDown(event) {
     const key = event.code;
     const { keyCode } = event;
     const textarea = document.getElementById('result');
@@ -209,20 +212,20 @@ export default class App extends Component {
     const ruKeys = document.querySelectorAll('.ru');
     const downKeys = document.querySelectorAll('.down');
     const upKeys = document.querySelectorAll('.up');
-  
+
     if (!CONSTANTS.NOT_FOR_PRESS_BUTTONS.includes(key)) {
       this.state.pressed.add(key);
     } else {
       return;
     }
-  
+
     if (event.key === 'AltGraph') {
       ctrlButton.classList.remove('key--active');
     }
-  
+
     const element = keyboard.querySelector(`.${key}`);
     textarea.focus();
-  
+
     if (!element.classList.contains('CapsLock')) {
       if (keyCode === CONSTANTS.KEY_CODES.ALT && !this.state.pressed.has('ControlLeft')) {
         event.preventDefault();
@@ -231,7 +234,7 @@ export default class App extends Component {
         element.classList.add('key--active');
       }
     }
-  
+
     // switch state
     if (this.state.pressed.has('ShiftLeft') && this.state.pressed.has('AltLeft')) {
       if (this.state.en) { // switch lang state
@@ -239,43 +242,43 @@ export default class App extends Component {
       } else {
         this.state.en = true;
       }
-  
+
       UTILS.saveState(this.state.en);
       UTILS.switcher(this.state.en, enKeys, ruKeys);
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.SHIFT && this.state.pressed.size === 1) {
       if (this.state.uppercase) {
         this.state.uppercase = false; // switch shift state
       } else {
         this.state.uppercase = true;
       }
-  
+
       UTILS.switcher(this.state.uppercase, upKeys, downKeys);
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.CAPS_LOCK) {
       if (this.state.uppercase) { // switch capsLock state
         this.state.uppercase = false;
       } else {
         this.state.uppercase = true;
       }
-  
+
       UTILS.switcher(this.state.uppercase, upKeys, downKeys);
-  
+
       if (capsLockButton.classList.contains('key--active')) {
         capsLockButton.classList.remove('key--active');
       } else {
         capsLockButton.classList.add('key--active');
       }
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.TAB) {
       event.preventDefault();
       textarea.value = `${currentValue}  `;
       this.state.result = textarea.value;
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.ARROW_LEFT) {
       if (startCursorValue === 1) {
         textarea.setSelectionRange(0, 0);
@@ -284,7 +287,7 @@ export default class App extends Component {
         textarea.setSelectionRange(startCursorValue - 1, startCursorValue - 1);
       }
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.ARROW_RIGHT) {
       if (startCursorValue === this.state.result.length) {
         textarea.value = `${currentValue} `;
@@ -293,18 +296,18 @@ export default class App extends Component {
       }
       textarea.setSelectionRange(startCursorValue + 1, startCursorValue + 1);
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.ARROW_UP) {
       event.preventDefault();
       textarea.value = `${currentValue}▲`;
       this.state.result = textarea.value;
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.ARROW_DOWN) {
       textarea.value = `${currentValue}▼`;
       this.state.result = textarea.value;
     }
-  
+
     this.state.result = textarea.value;
   }
 
@@ -316,19 +319,19 @@ export default class App extends Component {
     const downKeys = document.querySelectorAll('.down');
     const upKeys = document.querySelectorAll('.up');
     const textarea = document.getElementById('result');
-  
+
     if (this.state.pressed.size === 0) {
       return;
     }
-  
+
     if (!element) { // if null
       return;
     }
-  
+
     if (element.classList.contains('key--active') && !element.classList.contains('CapsLock')) {
       element.classList.remove('key--active');
     }
-  
+
     if (keyCode === CONSTANTS.KEY_CODES.SHIFT) { // switch shift state
       if (capsLockButton.classList.contains('key--active')) {
         this.state.uppercase = true;
@@ -338,13 +341,13 @@ export default class App extends Component {
         UTILS.switcher(this.state.uppercase, upKeys, downKeys);
       }
     }
-  
+
     this.state.result = textarea.value;
     this.state.pressed.delete(event.code);
     textarea.focus();
   }
 
-  onMouseLeave() {
+  static onMouseLeave() {
     const onMouseLeaveHandler = (event) => {
       const { target } = event;
       if (!target.classList.contains('key')) return;
@@ -355,13 +358,13 @@ export default class App extends Component {
     };
 
     const keyButton = document.querySelectorAll('.key');
-    keyButton.forEach(function (button) {
+    keyButton.forEach((button) => {
       button.addEventListener('mouseleave', onMouseLeaveHandler);
     });
   }
-  
-  localStorageInit() {    
-    const saveLangValue = localStorage.getItem('lang-en');    
+
+  localStorageInit() {
+    const saveLangValue = localStorage.getItem('lang-en');
     const enKeys = document.querySelectorAll('.en');
     const ruKeys = document.querySelectorAll('.ru');
 
@@ -371,7 +374,7 @@ export default class App extends Component {
 
     UTILS.switcher(this.state.en, enKeys, ruKeys);
   }
-  
+
 
   start() {
     this.createApp();
@@ -379,11 +382,11 @@ export default class App extends Component {
     document.addEventListener('click', this.onClick.bind(this));
     document.addEventListener('mousedown', this.onMouseDown.bind(this));
     document.addEventListener('mouseup', this.onMouseUp.bind(this));
-    document.addEventListener('keydown', this.onKeyDown.bind(this));    
+    document.addEventListener('keydown', this.onKeyDown.bind(this));
     document.addEventListener('keyup', this.onKeyUp.bind(this));
-    this.onMouseLeave();
+    App.onMouseLeave();
 
     // init localStorage data
-    window.addEventListener('load', this.localStorageInit.bind(this), false);    
+    window.addEventListener('load', this.localStorageInit.bind(this), false);
   }
 }

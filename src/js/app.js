@@ -2,6 +2,7 @@ import DATA from './data';
 import Row from './components/row';
 import Component from './components/component';
 import UTILS from './utils';
+import CONSTANTS from './constants';
 
 export default class App extends Component {
   constructor() {
@@ -51,17 +52,108 @@ export default class App extends Component {
     const endCursorValue = textarea.selectionEnd;
 
     if (target.classList.contains('CapsLock')) {
-      if (this.state.uppercase) { // switch capsLock state
-        this.state.uppercase = false;
-      } else this.state.uppercase = true;
+      if (this.this.state.uppercase) { // switch capsLock state
+        this.this.state.uppercase = false;
+      } else this.this.state.uppercase = true;
   
-      UTILS.switcher(this.state.uppercase, upKeys, downKeys);
+      UTILS.switcher(this.this.state.uppercase, upKeys, downKeys);
+
       if (capsLockButton.classList.contains('key--active')) {
         capsLockButton.classList.remove('key--active');
       } else {
         capsLockButton.classList.add('key--active');
       }
     } 
+
+    if (target.classList.contains('down') || target.classList.contains('up')) {
+      const char = target.innerText;
+      let className = target.classList[0];
+      console.log(className)
+      textarea.focus();
+  
+      if (CONSTANTS.NOT_FOR_PRINT_BUTTONS.includes(className)) {
+        return;
+      }
+  
+      switch (className) {
+        case 'Space':
+          textarea.value = `${currentValue} `;
+          this.state.result = textarea.value;
+          break;
+        case 'Backspace':
+          if (startCursorValue !== this.state.result.length) {
+            const subStr = currentValue.substr(startCursorValue - 1, 1);
+            textarea.value = `${currentValue.replace(subStr, '')}`;
+            this.state.result = textarea.value;
+            textarea.setSelectionRange(startCursorValue - 1, startCursorValue - 1);
+          }
+          if (startCursorValue === this.state.result.length) {
+            textarea.value = currentValue.replace(/.$/, '');
+            this.state.result = textarea.value;
+          }
+          if (startCursorValue !== endCursorValue) {
+            const subStr = currentValue.slice(startCursorValue, endCursorValue);
+            textarea.value = `${currentValue.replace(subStr, '')}`;
+            this.state.result = textarea.value;
+            textarea.setSelectionRange(startCursorValue, startCursorValue);
+          }
+          break;
+        case 'Enter':
+          textarea.value = `${currentValue}\r\n`;
+          this.state.result = textarea.value;
+          break;
+        case 'Tab':
+          textarea.value = `${currentValue}  `;
+          this.state.result = textarea.value;
+          break;
+        case 'Delete':
+          if (startCursorValue === endCursorValue) {
+            const subStr = currentValue.substr(startCursorValue, 1);
+            textarea.value = `${currentValue.replace(subStr, '')}`;
+            this.state.result = textarea.value;
+            textarea.setSelectionRange(startCursorValue, startCursorValue);
+          } else {
+            const subStr = currentValue.slice(startCursorValue, endCursorValue);
+            textarea.value = `${currentValue.replace(subStr, '')}`;
+            this.state.result = textarea.value;
+            textarea.setSelectionRange(startCursorValue, startCursorValue);
+          }
+          break;
+        case 'ArrowLeft':
+          if (startCursorValue === 1) {
+            textarea.setSelectionRange(0, 0);
+          }
+          if (startCursorValue > 1) {
+            textarea.setSelectionRange(startCursorValue - 1, startCursorValue - 1);
+          }
+          break;
+        case 'ArrowRight':
+          if (startCursorValue === this.state.result.length) {
+            textarea.value = `${currentValue} `;
+            this.state.result = textarea.value;
+            textarea.setSelectionRange(startCursorValue + 1, startCursorValue + 1);
+          }
+          textarea.setSelectionRange(startCursorValue + 1, startCursorValue + 1);
+          break;
+        case 'notForPrint':
+          textarea.value = `${currentValue}`;
+          this.state.result = textarea.value;
+          break;
+  
+        default:
+          // ability to insert a character in the middle of a line
+          if (this.state.result.length !== startCursorValue) {
+            const subStrStart = currentValue.slice(0, startCursorValue);
+            const subStrEnd = currentValue.slice(startCursorValue);
+            textarea.value = `${subStrStart}${char}${subStrEnd}`;
+            this.state.result = textarea.value;
+            textarea.setSelectionRange(startCursorValue + 1, startCursorValue + 1);
+          } else {
+            textarea.value = currentValue + char;
+            this.state.result = textarea.value;
+          }
+      }
+    }  
   }
 
   start() {

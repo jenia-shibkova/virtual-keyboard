@@ -345,7 +345,24 @@ export default class App extends Component {
     this.state.result = textarea.value;
     this.state.pressed.delete(event.code);
     textarea.focus();
-  };
+  }
+
+  onMouseLeave () {
+    const onMouseLeaveHandler = (event) => {
+      const { target } = event;
+      if (!target.classList.contains('key')) return;
+
+      if (!target.classList.contains('CapsLock') && target.classList.contains('key--active')) {
+        target.classList.remove('key--active');
+      }
+    };
+
+    const keyButton = document.querySelectorAll('.key');
+    keyButton.forEach(function (button) {
+      console.log(this)
+      button.addEventListener('mouseleave', onMouseLeaveHandler);
+    });
+  }
 
   start() {
     this.createApp();
@@ -355,5 +372,6 @@ export default class App extends Component {
     document.addEventListener('mouseup', this.onMouseUp.bind(this));
     document.addEventListener('keydown', this.onKeyDown.bind(this));    
     document.addEventListener('keyup', this.onKeyUp.bind(this));
+    this.onMouseLeave();    
   }
 }

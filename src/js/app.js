@@ -1,6 +1,7 @@
 import DATA from './data';
 import Row from './components/row';
 import Component from './components/component';
+import UTILS from './utils';
 
 export default class App extends Component {
   constructor() {
@@ -35,7 +36,38 @@ export default class App extends Component {
     document.body.appendChild(appTemplate);
   }
 
+  onClick({ target }) {
+    const capsLockButton = document.querySelector('.CapsLock');
+    const downKeys = document.querySelectorAll('.down');
+    const upKeys = document.querySelectorAll('.up');
+
+    const enKeys = document.querySelectorAll('.en');
+    const ruKeys = document.querySelectorAll('.ru');
+
+    const textarea = document.getElementById('result');
+
+    const currentValue = textarea.value;
+    const startCursorValue = textarea.selectionStart;
+    const endCursorValue = textarea.selectionEnd;
+
+    if (target.classList.contains('CapsLock')) {
+      if (this.state.uppercase) { // switch capsLock state
+        this.state.uppercase = false;
+      } else this.state.uppercase = true;
+  
+      UTILS.switcher(this.state.uppercase, upKeys, downKeys);
+      if (capsLockButton.classList.contains('key--active')) {
+        capsLockButton.classList.remove('key--active');
+      } else {
+        capsLockButton.classList.add('key--active');
+      }
+    } 
+  }
+
   start() {
     this.createApp();
+    const keyboard = document.querySelector('.keyboard');
+    
+    keyboard.addEventListener('click', this.onClick.bind(this));
   }
 }

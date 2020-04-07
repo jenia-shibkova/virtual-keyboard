@@ -42,9 +42,6 @@ export default class App extends Component {
     const downKeys = document.querySelectorAll('.down');
     const upKeys = document.querySelectorAll('.up');
 
-    const enKeys = document.querySelectorAll('.en');
-    const ruKeys = document.querySelectorAll('.ru');
-
     const textarea = document.getElementById('result');
 
     const currentValue = textarea.value;
@@ -176,7 +173,7 @@ export default class App extends Component {
     if (element.classList.contains('key') && !element.classList.contains('CapsLock')) {
       element.classList.add('key--active');
     }
-  };
+  }
 
   onMouseUp({ target }) {
     const element = document.querySelector(`.${target.classList[0]}`);
@@ -197,14 +194,166 @@ export default class App extends Component {
     if (element.classList.contains('key') && !element.classList.contains('CapsLock') && element.classList.contains('key--active')) {
       element.classList.remove('key--active');
     }
+  }
+
+  onKeyDown (event) {
+    const key = event.code;
+    const { keyCode } = event;
+    const textarea = document.getElementById('result');
+    const currentValue = textarea.value;
+    const startCursorValue = textarea.selectionStart;
+    const ctrlButton = document.querySelector('.ControlLeft');
+    const keyboard = document.querySelector('.keyboard');
+    const capsLockButton = document.querySelector('.CapsLock');
+    const enKeys = document.querySelectorAll('.en');
+    const ruKeys = document.querySelectorAll('.ru');
+    const downKeys = document.querySelectorAll('.down');
+    const upKeys = document.querySelectorAll('.up');
+  
+    if (!CONSTANTS.NOT_FOR_PRESS_BUTTONS.includes(key)) {
+      this.state.pressed.add(key);
+    } else {
+      return;
+    }
+  
+    if (event.key === 'AltGraph') {
+      ctrlButton.classList.remove('key--active');
+    }
+  
+    const element = keyboard.querySelector(`.${key}`);
+    textarea.focus();
+  
+    if (!element.classList.contains('CapsLock')) {
+      if (keyCode === CONSTANTS.KEY_CODES.ALT && !this.state.pressed.has('ControlLeft')) {
+        event.preventDefault();
+        element.classList.add('key--active');
+      } else {
+        element.classList.add('key--active');
+      }
+    }
+  
+    // switch state
+    if (this.state.pressed.has('ShiftLeft') && this.state.pressed.has('AltLeft')) {
+      if (this.state.en) { // switch lang state
+        this.state.en = false;
+      } else {
+        this.state.en = true;
+      }
+  
+     // saveState(State.en);
+      UTILS.switcher(this.state.en, enKeys, ruKeys);
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.SHIFT && this.state.pressed.size === 1) {
+      if (this.state.uppercase) {
+        this.state.uppercase = false; // switch shift state
+      } else {
+        this.state.uppercase = true;
+      }
+  
+      UTILS.switcher(this.state.uppercase, upKeys, downKeys);
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.CAPS_LOCK) {
+      if (this.state.uppercase) { // switch capsLock state
+        this.state.uppercase = false;
+      } else {
+        this.state.uppercase = true;
+      }
+  
+      UTILS.switcher(this.state.uppercase, upKeys, downKeys);
+  
+      if (capsLockButton.classList.contains('key--active')) {
+        capsLockButton.classList.remove('key--active');
+      } else {
+        capsLockButton.classList.add('key--active');
+      }
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.TAB) {
+      event.preventDefault();
+      textarea.value = `${currentValue}  `;
+      this.state.result = textarea.value;
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.ARROW_LEFT) {
+      if (startCursorValue === 1) {
+        textarea.setSelectionRange(0, 0);
+      }
+      if (startCursorValue > 1) {
+        textarea.setSelectionRange(startCursorValue - 1, startCursorValue - 1);
+      }
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.ARROW_RIGHT) {
+      if (startCursorValue === this.state.result.length) {
+        textarea.value = `${currentValue} `;
+        this.state.result = textarea.value;
+        textarea.setSelectionRange(startCursorValue + 1, startCursorValue + 1);
+      }
+      textarea.setSelectionRange(startCursorValue + 1, startCursorValue + 1);
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.ARROW_UP) {
+      event.preventDefault();
+      textarea.value = `${currentValue}▲`;
+      this.state.result = textarea.value;
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.ARROW_DOWN) {
+      textarea.value = `${currentValue}▼`;
+      this.state.result = textarea.value;
+    }
+  
+    this.state.result = textarea.value;
+  }
+
+  onKeyUp(event) {
+    const key = event.code;
+    const { keyCode } = event;
+    const element = document.querySelector(`.${key}`);
+    const capsLockButton = document.querySelector('.CapsLock');
+    const downKeys = document.querySelectorAll('.down');
+    const upKeys = document.querySelectorAll('.up');
+    const textarea = document.getElementById('result');
+
+    const enKeys = document.querySelectorAll('.en');
+    const ruKeys = document.querySelectorAll('.ru');
+  
+    if (this.state.pressed.size === 0) {
+      return;
+    }
+  
+    if (!element) { // if null
+      return;
+    }
+  
+    if (element.classList.contains('key--active') && !element.classList.contains('CapsLock')) {
+      element.classList.remove('key--active');
+    }
+  
+    if (keyCode === CONSTANTS.KEY_CODES.SHIFT) { // switch shift state
+      if (capsLockButton.classList.contains('key--active')) {
+        this.state.uppercase = true;
+        UTILS.switcher(this.state.uppercase, upKeys, downKeys);
+      } else {
+        this.state.uppercase = false;
+        UTILS.switcher(this.state.uppercase, upKeys, downKeys);
+      }
+    }
+  
+    this.state.result = textarea.value;
+    this.state.pressed.delete(event.code);
+    textarea.focus();
   };
 
   start() {
     this.createApp();
-    const keyboard = document.querySelector('.keyboard');
     
-    keyboard.addEventListener('click', this.onClick.bind(this));
-    keyboard.addEventListener('mousedown', this.onMouseDown.bind(this));
-    keyboard.addEventListener('mouseup', this.onMouseUp.bind(this));
+    document.addEventListener('click', this.onClick.bind(this));
+    document.addEventListener('mousedown', this.onMouseDown.bind(this));
+    document.addEventListener('mouseup', this.onMouseUp.bind(this));
+    document.addEventListener('keydown', this.onKeyDown.bind(this));    
+    document.addEventListener('keyup', this.onKeyUp.bind(this));
   }
 }

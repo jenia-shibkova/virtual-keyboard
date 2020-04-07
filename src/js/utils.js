@@ -1,9 +1,3 @@
-const createElement = (template) => {
-  const newElement = document.createElement('template');
-  newElement.innerHTML = template;
-  return newElement.content.children[0];
-};
-
 const switcher = (state, keysA, keysB) => {
   if (state) {
     keysA.forEach((key) => {
